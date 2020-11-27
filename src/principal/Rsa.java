@@ -9,7 +9,7 @@ import java.io.*;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class Rsa {
+public class Rsa extends Thread{
     
     //variables
     int tamanoPrimo;
@@ -30,9 +30,38 @@ public class Rsa {
         this.JTAmensaje = JTAmensaje;
     }
     
+    @Override
+    public void run(){
     
+        p = new BigInteger(tamanoPrimo, 10, new Random());
+        do q = new BigInteger(tamanoPrimo, 10, new Random());
+        while(q.compareTo(p)==0);
+        System.out.println(p+"\n"+q);
+        
+        this.JTFp.setText(p.toString());
+        this.JTFq.setText(q.toString());
     
-    public void generarPrimos(){
+        //n = pq
+        n = p.multiply(q);
+        //p(phi) = (p-1)(q-1)
+        totient = p.subtract(BigInteger.valueOf(1));
+        totient = totient.multiply(q.subtract(BigInteger.valueOf(1)));
+        //elegir el primo relativo menor a n 
+        do e = new BigInteger(2*tamanoPrimo, new Random());
+        while(e.compareTo(totient) != -1 || e.gcd(totient).compareTo(BigInteger.valueOf(1)) != 0);
+        //operacion modulo
+        //d = e^1 mod totient
+        d = e.modInverse(totient);
+        
+        System.out.println("holi");
+        this.JTFd.setText(d.toString());
+        this.JTFe.setText(e.toString());
+        this.JTFn.setText(n.toString());
+        this.JTFphi.setText(totient.toString());
+    
+    }
+    
+    /*public void generarPrimos(){
     
         p = new BigInteger(tamanoPrimo, 10, new Random());
         do q = new BigInteger(tamanoPrimo, 10, new Random());
@@ -64,7 +93,7 @@ public class Rsa {
         this.JTFphi.setText(totient.toString());
         
     
-    }
+    }*/
     
     public BigInteger[] encriptar(String mensaje){
         
